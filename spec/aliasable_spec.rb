@@ -72,7 +72,7 @@ describe "Aliasable" do
   end
 
   describe '.forget_aliases' do
-    it "should forget all aliases" do
+    it "should clear all aliases for this hierarchy" do
       Base.forget_aliases
       Base.aliases.should be_empty
     end
