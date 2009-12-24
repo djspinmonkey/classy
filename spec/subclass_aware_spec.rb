@@ -46,6 +46,8 @@ describe "SubclassAware" do
   it "should forget all subclasses when forget_subclasses() is called" do
     ParentA.forget_subclasses
     ParentA.subclasses.should be_empty
+
+    ParentB::subclasses.should include(SubclassB1, SubclassB2, SubclassB3)
     ParentB.subclasses.should have(3).subclasses
   end
 
