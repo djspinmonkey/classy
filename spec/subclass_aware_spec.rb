@@ -1,12 +1,12 @@
 require File.join(File.dirname(__FILE__), 'spec_helper')
 
-describe "Testify::SubclassAware" do
+describe "SubclassAware" do
 
   before :all do
     # TODO: It would be nicer if this were torn down and re-built between each test.
     
     class ParentA
-      extend Testify::SubclassAware
+      extend SubclassAware
 
       # This is kind of a pain in the butt, but it's what you need to do if you
       # define your own self.inherited to keep from blowing away the one
@@ -19,7 +19,7 @@ describe "Testify::SubclassAware" do
     end
 
     class ParentB
-      extend Testify::SubclassAware
+      extend SubclassAware
     end
 
     class SubclassA1 < ParentA; end
