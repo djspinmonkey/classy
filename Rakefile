@@ -5,8 +5,8 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "classy"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.summary = %Q{A collection of modules to enhance the capabilities of Ruby classes in various ways.}
+    gem.description = %Q{Classy is a collection of meta-programming heavy modules which you can extend in order to give various capabilities to your Ruby classes.  For example, SubclassAware lets a class know about all of its subclasses (and sub-subclasses, etc), and Aliasable lets you refer to classes via symbols (useful for creating friendly DSLs).}
     gem.email = "github@djspinmonkey.com"
     gem.homepage = "http://github.com/djspinmonkey/classy"
     gem.authors = ["John Hyland"]
