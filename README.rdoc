@@ -6,6 +6,29 @@ SubclassAware lets a class know about all of its subclasses (and
 sub-subclasses, etc), and Aliasable lets you refer to classes via symbols
 (useful for creating friendly DSLs).
 
+== Examples
+
+  class Parent
+    extend Aliasable
+    extend SubclassAware
+
+    aka :pop
+  end
+
+  class ChildA
+    aka :kid1
+  end
+
+  class ChildB
+    aka :kid2
+  end
+
+  Parent.find(:kid1)  # => ChildA
+  Parent.subclasses   # => [ ChildA, ChildB ]
+
+More extensive documentation and example code can be found in the RDoc for each
+module, or in the spec files.
+
 == Note on Patches/Pull Requests
  
 * Fork the project.
