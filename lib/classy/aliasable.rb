@@ -29,7 +29,7 @@
 #
 module Aliasable
 
-  def self.extended (klass) #nodoc;
+  def self.extended (klass) #:nodoc:
     klass.class_exec do
       class_variable_set(:@@classy_aliases, {})
     end
@@ -46,7 +46,7 @@ module Aliasable
     class_variable_get(:@@classy_aliases)[klass] or raise ArgumentError, "Could not find alias #{klass}"
   end
 
-  # Forget all known aliases.
+  # Forget all known aliases.  Mainly useful for testing purposes.
   #
   def forget_aliases
     class_variable_get(:@@classy_aliases).clear
