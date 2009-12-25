@@ -1,3 +1,29 @@
+# Aliasable allows you to assign aliases to a class (probably symbols, but any
+# unique objects would work) and look it up again later with that alias.  This
+# alias-to-class hash is kept in a class variable, so each mapping is unique to
+# a given class hierarchy.
+#
+# Note: As mentioned, this module keeps its identity map in a class variable,
+# @@classy_aliases, on the extending class.  This could concievably lead to
+# namespace conflicts and strange bugs in the unlikely event that this variable
+# is used for anything else.  Later versions may implement a hash of identity
+# maps as a class variable on the Aliasble module itself, but for reasons of
+# complexity and performance, that has not been done at this time.
+#
+# Example:
+#
+#   class Parent
+#     extend Aliasable
+#     aka :pop
+#   end
+#   
+#   class Child < Parent
+#     aka :kid
+#   end
+#
+#   Parent.find(:pop)   # => Parent
+#   Parent.find(:kid)   # => Child
+#
 module Aliasable
   def self.extended (klass) #nodoc;
     klass.class_exec do
