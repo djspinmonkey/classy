@@ -1,7 +1,8 @@
 # Aliasable allows you to assign aliases to a class (probably symbols, but any
 # unique objects would work) and look it up again later with that alias.  This
 # alias-to-class hash is kept in a class variable, so each mapping is unique to
-# a given class hierarchy.
+# a given class hierarchy.  Possible uses for this include friendlier DSLs or
+# additional layers of dynamic abstraction when specifying classes.
 #
 # Note: As mentioned, this module keeps its identity map in a class variable,
 # @@classy_aliases, on the extending class.  This could concievably lead to
@@ -23,6 +24,8 @@
 #
 #   Parent.find(:pop)   # => Parent
 #   Parent.find(:kid)   # => Child
+#
+# More complex usage examples can be found in the aliasable_spec.rb file.
 #
 module Aliasable
   def self.extended (klass) #nodoc;
