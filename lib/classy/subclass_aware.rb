@@ -13,7 +13,6 @@ module SubclassAware
     class_exec { class_variable_get(:@@subclasses).add sub }
   end
 
-  ##
   # Return an array of all known subclasses (and sub-subclasses, etc) of this
   # class.
   #
@@ -21,7 +20,6 @@ module SubclassAware
     class_exec { class_variable_get(:@@subclasses).to_a }
   end
 
-  ##
   # Clear all info about known subclasses.  Usefull for testing, but it is
   # unlikely you would use it for much else.
   #
