@@ -13,21 +13,22 @@
 #
 # Example:
 #
-#   class Parent
+#   class ParentClass
 #     extend Aliasable
 #     aka :pop
 #   end
 #   
-#   class Child < Parent
+#   class AliasedSubclass < ParentClass
 #     aka :kid
 #   end
 #
-#   Parent.find(:pop)   # => Parent
-#   Parent.find(:kid)   # => Child
+#   Parent.find(:pop)   # => ParentClass
+#   Parent.find(:kid)   # => AliasedSubclass
 #
 # More complex usage examples can be found in the aliasable_spec.rb file.
 #
 module Aliasable
+
   def self.extended (klass) #nodoc;
     klass.class_exec do
       class_variable_set(:@@classy_aliases, {})
@@ -37,7 +38,8 @@ module Aliasable
   # When passed a class, just returns it.  When passed a symbol that is an
   # alias for a class, returns that class.
   #
-  #   Testify::Framework::Base.find(:rspec)  # => Testify::Framework::RSpec
+  #   ParentClass.find(AliasedSubclass)   # => AliasedSubclass
+  #   ParentClass.find(:kid)              # => AliasedSubclass
   #
   def find (klass)
     return klass if klass.kind_of? Class
@@ -51,11 +53,10 @@ module Aliasable
   end
 
   # Specifies a symbol (or several) that a given framework might be known
-  # by.  For example, if you wanted to refer to RSpec by :rspec or :spec,
-  # you might do this:
+  # by.  
   #
-  #   class RSpec
-  #     aka :rspec, spec
+  #   class AnotherClass
+  #     aka :kid2, :chunky_bacon
   #     ...
   #   end
   #
@@ -67,6 +68,8 @@ module Aliasable
   end
 
   # Return a hash of known aliases to Class objects
+  #
+  #   ParentClass.aliases   # => { :pop => ParentClass, :kid => AliasedSubclass, :kid2 => AnotherClass, :chunky_bacon => AnotherClass }
   #
   def aliases
     class_variable_get(:@@classy_aliases).dup
