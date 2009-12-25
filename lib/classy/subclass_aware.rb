@@ -3,7 +3,7 @@ require 'set'
 # SubclassAware allows a class to know about all of the subclasses that descend
 # from it in the inheritance tree.
 #
-# Example:
+# == Example
 #
 #   class Parent
 #     extend SubclassAware
@@ -20,11 +20,11 @@ require 'set'
 #
 #   Parent.subclasses   # => [ ChildA, ChildB, ChildB1 ]
 #
-# Warning: This module defines an inherited() class method on the extending
-# class to keep track of subclasses.  Unfortunately, if this method is later
-# re-defined, this inherited() method is lost and subclass tracking will break.
-# In order to work around this, constructions like the following might be
-# necessary:
+# == Warning 
+# This module defines an inherited() class method on the extending class to
+# keep track of subclasses.  Unfortunately, if this method is later re-defined,
+# this inherited() method is lost and subclass tracking will break.  In order
+# to work around this, constructions like the following might be necessary:
 #
 #   class ChildC < Parent
 #

@@ -11,7 +11,7 @@
 # maps as a class variable on the Aliasable module itself, but for reasons of
 # complexity and performance, that has not been done at this time.
 #
-# Example:
+# ==Example
 #
 #   class ParentClass
 #     extend Aliasable
