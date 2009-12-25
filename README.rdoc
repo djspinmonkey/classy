@@ -1,7 +1,7 @@
 = classy
 
-Classy is a collection of meta-programming heavy modules which you can extend
-in order to give various capabilities to your Ruby classes.  For example,
+Classy is a collection of metaprogramming-heavy modules which you can extend in
+order to give various capabilities to your Ruby classes.  For example,
 SubclassAware lets a class know about all of its subclasses (and
 sub-subclasses, etc), and Aliasable lets you refer to classes via symbols
 (useful for creating friendly DSLs).

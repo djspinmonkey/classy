@@ -1,4 +1,4 @@
-# Aliasable allows you to assign aliases to a class (probably symbols, but any
+# Aliasable allows you to assign aliases to a class (usually symbols, but any
 # unique objects would work) and look it up again later with that alias.  This
 # alias-to-class hash is kept in a class variable, so each mapping is unique to
 # a given class hierarchy.  Possible uses for this include friendlier DSLs or
