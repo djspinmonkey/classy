@@ -8,7 +8,7 @@
 # @@classy_aliases, on the extending class.  This could concievably lead to
 # namespace conflicts and strange bugs in the unlikely event that this variable
 # is used for anything else.  Later versions may implement a hash of identity
-# maps as a class variable on the Aliasble module itself, but for reasons of
+# maps as a class variable on the Aliasable module itself, but for reasons of
 # complexity and performance, that has not been done at this time.
 #
 # Example:
