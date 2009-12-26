@@ -27,7 +27,8 @@ sub-subclasses, etc), and Aliasable lets you refer to classes via symbols
   Parent.subclasses   # => [ ChildA, ChildB ]
 
 More extensive documentation and example code can be found in the RDoc for each
-module, or in the spec files.
+module (available online at http://rdoc.info/projects/djspinmonkey/classy) or
+in the spec files.
 
 == Note on Patches/Pull Requests
  
