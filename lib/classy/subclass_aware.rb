@@ -1,7 +1,7 @@
 require 'set'
 
 # SubclassAware allows a class to know about all of the subclasses that descend
-# from it in the inheritance tree.
+# from it in the inheritance tree.  
 #
 # == Example
 #
@@ -20,7 +20,14 @@ require 'set'
 #
 #   Parent.subclasses   # => [ ChildA, ChildB, ChildB1 ]
 #
+# == Note
+#
+# SubclassAware sets and maintains the class variable @@classy_subclasses on
+# the extending class, so in the unlikely event that this class variable is
+# already in use, unusual bugs may result.
+#
 # == Warning 
+#
 # This module defines an inherited() class method on the extending class to
 # keep track of subclasses.  Unfortunately, if this method is later re-defined,
 # this inherited() method is lost and subclass tracking will break.  In order
@@ -41,30 +48,35 @@ require 'set'
 #
 module SubclassAware
 
-  def self.extended (klass) #:nodoc:
-    klass.class_exec { class_variable_set(:@@subclasses, Set.new) }
+  # Instantiate a new Set of subclasses.  Not intended to be called directly.
+  #
+  def self.extended(klass)
+    klass.class_exec { class_variable_set(:@@classy_subclasses, Set.new) }
   end
 
+  # Add the inheriting class to the list of subclasses.  Not intended to be
+  # called directly.
+  #
   # TODO: Find a way for self.inherited on the extended class not to blow
   # this away without requiring a bunch of alias chain hoops to be jumped
-  # through.
+  # through, as described above.
   #
-  def inherited(sub) #:nodoc:
-    class_exec { class_variable_get(:@@subclasses).add sub }
+  def inherited(sub)
+    class_exec { class_variable_get(:@@classy_subclasses).add sub }
   end
 
   # Return an array of all known subclasses (and sub-subclasses, etc) of this
   # class.
   #
   def subclasses
-    class_exec { class_variable_get(:@@subclasses).to_a }
+    class_exec { class_variable_get(:@@classy_subclasses).to_a }
   end
 
   # Clear all info about known subclasses.  This method is probably mainly
   # useful for testing.
   #
   def forget_subclasses
-    class_exec { class_variable_get(:@@subclasses).clear }
+    class_exec { class_variable_get(:@@classy_subclasses).clear }
   end
 
 end
