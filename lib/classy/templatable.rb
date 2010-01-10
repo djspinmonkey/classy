@@ -14,7 +14,7 @@ module Templatable
       # define the instance setter method
       #
       define_method("#{symbol}=".to_sym) do |value|
-        instance_method_set("@#{symbol}", value)
+        instance_variable_set("@#{symbol}", value)
         @@ever_been_set[self][symbol] = true
       end
 
@@ -22,7 +22,7 @@ module Templatable
       #
       define_method(symbol) do 
         if @@ever_been_set[self][symbol]
-          return instance_method_get("@#{symbol}", value)
+          return instance_variable_get("@#{symbol}")
         elsif self.class.class_variable_defined?("@@#{symbol}")
           return self.class.class_exec { class_variable_get("@@#{symbol}") }
         else
