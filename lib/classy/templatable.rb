@@ -6,9 +6,6 @@ module Templatable
   #
   @@ever_been_set = Hash.new { |hash, key| hash[key] = {} }
 
-  def clear_templatable_attrs
-  end
-
   def templatable_attr (*symbols)
     symbols.each do |symbol|
       # define the instance setter method
