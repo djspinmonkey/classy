@@ -51,4 +51,24 @@ describe "Templatable" do
 
   end
 
+  context "with all templatable values set" do
+    
+    before do
+      Widget.awesomeness = :pretty_dang
+      Widget.temperature = :cool
+      @thingy = Widget.new
+    end
+
+    it "should initialize new objects with values for all templatable variables" do
+      @thingy.awesomeness.should equal(:pretty_dang)
+      @thingy.temperature.should equal(:cool)
+    end
+
+    it "should be overridable in the instance" do
+      @thingy.awesomeness = :fairly
+      @thingy.awesomeness.should equal(:fairly)
+    end
+
+  end
+
 end
