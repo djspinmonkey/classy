@@ -3,11 +3,7 @@ require File.join(File.dirname(__FILE__), 'spec_helper')
 describe "Templatable" do
 
   before do
-    if defined?(Widget)
-      Widget.clear_templatable_attrs
-      destroy_class(Widget) 
-    end
-
+    destroy_class(Widget) if defined?(Widget)
     class Widget
       extend Templatable
       templatable_attr :temperature, :awesomeness
@@ -67,6 +63,30 @@ describe "Templatable" do
     it "should be overridable in the instance" do
       @thingy.awesomeness = :fairly
       @thingy.awesomeness.should equal(:fairly)
+    end
+
+    it "shouldn't affect other instances when overriding in one" do
+      @whatsit = Widget.new
+      @thingy.awesomeness = :locally
+
+      @whatsit.awesomeness.should equal(:pretty_dang)
+    end
+
+  end
+
+  context "with a subclass" do
+
+    before do
+      if defined?(RubberWidget)
+        RubberWidget.clear_templatable_attrs
+        destroy_class(RubberWidget) 
+      end
+
+      class RubberWidget < Widget
+        templatable_attr :childishness
+        awesomeness :moderate
+      end
+
     end
 
   end
