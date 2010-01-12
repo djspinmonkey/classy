@@ -36,11 +36,24 @@ module Templatable
           class_variable_set("@@#{symbol}", value)
         end
 
-        # define the class getter method
+        # define the class getter/setter method
         #
-        self.class.send(:define_method, symbol) do
-          class_variable_get("@@#{symbol}") if class_variable_defined?("@@#{symbol}")
-        end
+        # We want to be able to call this like a dsl as a setter, or like a
+        # class method as a getter, so we need variable arity, which
+        # define_method doesn't support.  In order to use the standard `def`
+        # with variable arity, eval'ing a string seems to be the only option.
+        #
+        # Oh man would I love for somebody to submit a patch to do this in a
+        # less horrible way.
+        #
+        self.class.class_eval "
+          def #{symbol} (value = nil)
+            if value
+              class_variable_set(\"@@#{symbol}\", value)
+            end
+            class_variable_get(\"@@#{symbol}\") if class_variable_defined?(\"@@#{symbol}\")
+          end
+        "
       end
     end
   end
