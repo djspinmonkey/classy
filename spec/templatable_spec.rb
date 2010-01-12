@@ -14,6 +14,18 @@ describe "Templatable" do
     @doodad = Widget.new
   end
 
+  it "should allow default values to be set as an assignment" do
+    Widget.temperature = :cool
+    Widget.temperature.should equal :cool
+  end
+
+  it "should allow default values to be via a dsl" do
+    class Widget
+      temperature :hot!
+    end
+    Widget.temperature.should equal :hot!
+  end
+
   it "should return the default value from the class when set" do
     Widget.awesomeness.should equal :total
   end
