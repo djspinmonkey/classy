@@ -11,6 +11,10 @@ sub-subclasses, etc), and Aliasable lets you refer to classes via symbols
   class Parent
     extend Aliasable
     extend SubclassAware
+    extend Templatable
+
+    templatable_attr :awesomeness, :temperature
+    awesomeness :fairly
 
     aka :pop
   end
@@ -23,8 +27,9 @@ sub-subclasses, etc), and Aliasable lets you refer to classes via symbols
     aka :kid2
   end
 
-  Parent.find(:kid1)  # => ChildA
-  Parent.subclasses   # => [ ChildA, ChildB ]
+  Parent.find(:kid1)      # => ChildA
+  Parent.subclasses       # => [ ChildA, ChildB ]
+  Parent.new.awesomeness  # => :fairly
 
 More extensive documentation and example code can be found in the RDoc for each
 module (available online at http://rdoc.info/projects/djspinmonkey/classy) or
