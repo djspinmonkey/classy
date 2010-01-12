@@ -24,6 +24,8 @@
 #   # Instances can override the defaults.
 #   doodad.awesomeness = nil
 #   doodad.temperature = :cool
+#   doodad.awesomeness    # => nil
+#   doodad.temperature    # => :cool
 #
 # == Note
 #
