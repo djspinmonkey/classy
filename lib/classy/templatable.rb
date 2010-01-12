@@ -37,6 +37,9 @@ module Templatable
   # (Required to distinguish between variables explicitly set to nil and those
   # left as nil by default.)
   #
+  # @private
+  # :nodoc:
+  #
   @@ever_been_set = Hash.new { |hash, key| hash[key] = {} }
 
   # Defines one or more templatable attrs, which will add instance methods
