@@ -8,87 +8,57 @@ describe "Templatable" do
       extend Templatable
       templatable_attr :temperature, :awesomeness
     end
+
+    Widget.awesomeness = :total
+
+    @doodad = Widget.new
   end
 
-  context "with no templatable values set" do
-
-    it "should return nil from the class getter methods" do
-      Widget.awesomeness.should be_nil
-      Widget.temperature.should be_nil
-    end
-
-    it "should initialize new objects with nil values" do
-      doodad = Widget.new
-      doodad.temperature.should be_nil
-      doodad.awesomeness.should be_nil
-    end
-
+  it "should return the default value from the class when set" do
+    Widget.awesomeness.should equal :total
   end
 
-  context "with one templatable value set" do
-
-    before do
-      Widget.awesomeness = :total
-    end
-
-    it "should return the templated value from the class getter method" do
-      Widget.awesomeness.should equal :total
-    end
-
-    it "should return nil from the unset class getter method" do
-      Widget.temperature.should be_nil
-    end
-
-    it "should only initialize new objects with values for the templated variables" do
-      doodad = Widget.new
-      doodad.temperature.should be_nil
-      doodad.awesomeness.should equal :total
-    end
-
+  it "should return nil from the class when unset" do
+    Widget.temperature.should be_nil
   end
 
-  context "with all templatable values set" do
-    
-    before do
-      Widget.awesomeness = :pretty_dang
-      Widget.temperature = :cool
-      @thingy = Widget.new
-    end
-
-    it "should initialize new objects with values for all templatable variables" do
-      @thingy.awesomeness.should equal(:pretty_dang)
-      @thingy.temperature.should equal(:cool)
-    end
-
-    it "should be overridable in the instance" do
-      @thingy.awesomeness = :fairly
-      @thingy.awesomeness.should equal(:fairly)
-    end
-
-    it "shouldn't affect other instances when overriding in one" do
-      @whatsit = Widget.new
-      @thingy.awesomeness = :locally
-
-      @whatsit.awesomeness.should equal(:pretty_dang)
-    end
-
+  it "should return the default value from an instance when set and not overridden" do
+    @doodad.awesomeness.should equal :total
   end
 
-  context "with a subclass" do
+  it "should return nil from an instance when unset and not overrideen" do
+    @doodad.temperature.should be_nil
+  end
 
-    before do
-      if defined?(RubberWidget)
-        RubberWidget.clear_templatable_attrs
-        destroy_class(RubberWidget) 
-      end
+  it "should allow instances to override the default values" do
+    @doodad.awesomeness = :sorta_i_guess
+    @doodad.awesomeness.should equal :sorta_i_guess
+  end
 
-      class RubberWidget < Widget
-        templatable_attr :childishness
-        awesomeness :moderate
-      end
+  it "shouldn't affect other instances when overriding a value" do
+    @whatsit = Widget.new
+    @whatsit.awesomeness = :locally
 
+    @doodad.awesomeness.should equal(:total)
+  end
+
+  it "shouldn't affect other Templatable classes" do
+    destroy_class(Pony) if defined?(Pony)
+    class Pony
+      extend Templatable
+      templatable_attr :name, :awesomeness
     end
+    sugar = Pony.new    # You get a pony!
 
+    Pony.awesomeness.should be_nil
+    sugar.awesomeness.should be_nil
+
+    Pony.awesomeness = :omg
+    Pony.awesomeness.should equal(:omg)
+    sugar.awesomeness.should equal(:omg)
+
+    sugar.awesomeness = :meh    # Apparently, you get a bad pony.
+    sugar.awesomeness.should equal(:meh)
   end
 
 end
