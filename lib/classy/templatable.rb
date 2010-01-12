@@ -1,3 +1,36 @@
+# Templatable allows a class to set default variables for its instances.
+#
+# == Example
+#
+#   class Widget
+#     extend Templatable
+#
+#     templatable_attr :awesomeness, :temperature
+#     awesomeness :total
+#   end
+#
+#   Widget.awesomeness    # => :total
+#   Widget.temperature    # => nil
+#
+#   doodad = Widget.new
+#   doodad.awesomeness    # => :total
+#   doodad.temperature    # => nil
+#
+#   # New defaults affect existing instances.
+#   Widget.temperature = :cool
+#   Widget.temperature    # => :cool
+#   doodad.temperature    # => :cool
+#
+#   # Instances can override the defaults.
+#   doodad.awesomeness = nil
+#   doodad.temperature = :cool
+#
+# == Note
+#
+# The default values are stored as class variables of the same name as the
+# associated instance variables.  This may lead to some surprising results, eg,
+# if you set a default value on a subclass.
+#
 module Templatable
 
   # A hash to track templatable variables that have been locally set.
@@ -6,6 +39,10 @@ module Templatable
   #
   @@ever_been_set = Hash.new { |hash, key| hash[key] = {} }
 
+  # Defines one or more templatable attrs, which will add instance methods
+  # similar to Ruby's standard attr_accessor method, and will also add class
+  # methods to set or get default values, as described above.
+  #
   def templatable_attr (*symbols)
     symbols.each do |symbol|
       # define the instance setter method
