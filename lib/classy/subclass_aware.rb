@@ -28,23 +28,19 @@ require 'set'
 #
 # == Warning 
 #
-# This module defines an inherited() class method on the extending class to
-# keep track of subclasses.  Unfortunately, if this method is later re-defined,
-# this inherited() method is lost and subclass tracking will break.  In order
-# to work around this, constructions like the following might be necessary:
+# This module defines an inherited() class method.  If the extending class
+# defines its own inherited() method without calling super, this inherited()
+# method is lost and subclass tracking will break.  In order to work around
+# this, make sure your inherited() method calls super.  Like this:
 #
-#   class ChildC < Parent
-#
-#     class << self; alias :old_inherited :inherited end
-#     def self.inherited(sub)
-#       old_inherited(sub)
-#       # ...your inherited() code...
-#     end
-#
+# class YourAwesomeClass
+#   
+#   def self.inherited
+#     # ...your awesome logic
+#     super  # <-- This is important.
 #   end
 #
-# This is not considered an acceptable long-term state of affairs - hopefully
-# in future versions of this module, this work around will not be necessary.
+# end
 #
 module SubclassAware
 
@@ -57,12 +53,9 @@ module SubclassAware
   # Add the inheriting class to the list of subclasses.  Not intended to be
   # called directly.
   #
-  # TODO: Find a way for self.inherited on the extended class not to blow
-  # this away without requiring a bunch of alias chain hoops to be jumped
-  # through, as described above.
-  #
   def inherited(sub)
     class_exec { class_variable_get(:@@classy_subclasses).add sub }
+    super
   end
 
   # Return an array of all known subclasses (and sub-subclasses, etc) of this

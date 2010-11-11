@@ -8,13 +8,10 @@ describe "SubclassAware" do
     class ParentA
       extend SubclassAware
 
-      # This is kind of a pain in the butt, but it's what you need to do if you
-      # define your own self.inherited to keep from blowing away the one
-      # SubclassAware sets up.  There's a todo in subclass_aware.rb about this.
-      class << self; alias :old_inherited :inherited end
+      # Make sure you call super in any self.inherited() methods!
       def self.inherited(sub)
-        old_inherited(sub)
-        # do your stuff here
+        # ...your stuff...
+        super  # <-- This is important
       end
     end
 
