@@ -4,17 +4,10 @@
 # a given class hierarchy.  Possible uses for this include friendlier DSLs or
 # additional layers of dynamic abstraction when specifying classes.
 #
-# Note: As mentioned, this module keeps its identity map in a class variable,
-# @@classy_aliases, on the extending class.  This could concievably lead to
-# namespace conflicts and strange bugs in the unlikely event that this variable
-# is used for anything else.  Later versions may implement a hash of identity
-# maps as a class variable on the Aliasable module itself, but for reasons of
-# complexity and performance, that has not been done at this time.
-#
 # ==Example
 #
 #   class ParentClass
-#     extend Aliasable
+#     include Aliasable
 #     aka :pop
 #   end
 #   
@@ -25,54 +18,119 @@
 #   Parent.find(:pop)   # => ParentClass
 #   Parent.find(:kid)   # => AliasedSubclass
 #
+# It is also possible to include Aliasable from a model, which will then track
+# aliases of classes which include that module.
+#
+# == Example
+#
+#   module Meta
+#     include Aliasable
+#   end
+#
+#   class AliasedClass
+#     include Meta
+#
+#     aka :klass
+#   end
+#
+#   Meta.find(:klass)  # => AliasedClass
+#
 # More complex usage examples can be found in the aliasable_spec.rb file.
 #
+# NOTE: This defines a class variable, @@classy_aliases, on any class or module
+# that includes Aliasable (or any class that includes a module including
+# Aliasable).
+#
+# ANOTHER NOTE: As always, if you define your own .included methods, be sure to
+# call super.
+#
 module Aliasable
+  # Handle a module or class including Aliasable.
+  #
+  # :nodoc:
+  #
+  def self.included( mod )
+    mod.extend ControllingClassMethods
+    mod.extend UniversalClassMethods
+    mod.extend AliasingClassMethods if mod.kind_of? Class       # If mod is a Class, the aliased classes get the class methods via inheritance.
+    mod.send :class_variable_set, :@@classy_aliases, Hash.new
+    super
+  end
 
-  def self.extended (klass) #:nodoc:
-    klass.class_exec do
-      class_variable_set(:@@classy_aliases, {})
+  # Methods for the class or module that the aliased classes inherit from or
+  # extend.
+  #
+  module ControllingClassMethods
+    # Handle a class including a module that has included Aliasable.
+    #
+    # :nodoc:
+    #
+    def included( klass )
+      klass.extend AliasingClassMethods
+      klass.extend UniversalClassMethods
+
+      # Hoo boy.  We need to set the @@classy_aliases class variable in the
+      # including class to point to the same actual hash object that the
+      # @@classy_aliases variable on the controlling module points to.  When
+      # everything is class based, this is done automatically, since
+      # sub-classes share class variables.
+      #
+      klass.send(:class_variable_set, :@@classy_aliases, self.send(:class_variable_get, :@@classy_aliases))
+
+      super
+    end
+
+    # When passed a class, just returns it.  When passed a symbol that is an
+    # alias for a class, returns that class.
+    #
+    #   ParentClass.find(AliasedSubclass)   # => AliasedSubclass
+    #   ParentClass.find(:kid)              # => AliasedSubclass
+    #
+    def find( nick )
+      return nick if nick.kind_of? Class
+      aliases[nick]
+    end
+
+    # Forget all known aliases.  Mainly useful for testing purposes.
+    #
+    def forget_aliases
+      aliases.clear
+    end
+
+  end
+
+  # Methods for the classes that get aliased.
+  #
+  module AliasingClassMethods
+    # Specifies a symbol (or several) that a given framework might be known
+    # by.  
+    #
+    #   class AnotherClass
+    #     aka :kid2, :chunky_bacon
+    #     ...
+    #   end
+    #
+    def aka( *nicks )
+      nicks.each do |nick| 
+        raise ArgumentError, "Called aka with an alias that is already taken." if aliases.include? nick
+        aliases[nick] = self
+      end
     end
   end
 
-  # When passed a class, just returns it.  When passed a symbol that is an
-  # alias for a class, returns that class.
+  # Methods for both the controlling class/module and the aliased classes.
   #
-  #   ParentClass.find(AliasedSubclass)   # => AliasedSubclass
-  #   ParentClass.find(:kid)              # => AliasedSubclass
-  #
-  def find (klass)
-    return klass if klass.kind_of? Class
-    class_variable_get(:@@classy_aliases)[klass] or raise ArgumentError, "Could not find alias #{klass}"
-  end
-
-  # Forget all known aliases.  Mainly useful for testing purposes.
-  #
-  def forget_aliases
-    class_variable_get(:@@classy_aliases).clear
-  end
-
-  # Specifies a symbol (or several) that a given framework might be known
-  # by.  
-  #
-  #   class AnotherClass
-  #     aka :kid2, :chunky_bacon
-  #     ...
-  #   end
-  #
-  def aka (*names)
-    names.each do |name| 
-      raise ArgumentError, "Called aka with an alias that is already taken." if class_variable_get(:@@classy_aliases).include? name
-      class_variable_get(:@@classy_aliases)[name] = self
+  module UniversalClassMethods
+    # Return a hash of known aliases to Class objects.
+    #
+    # DANGER DANGER: This is the actual hash used internally by Aliasable, not a
+    # dup. If you mess with it, you might asplode things.
+    #
+    #   ParentClass.aliases                     # => { :pop => ParentClass, :kid => AliasedSubclass, :kid2 => AnotherClass, :chunky_bacon => AnotherClass }
+    #   ParentClass.aliases[:thing] = "BOOM"    # This will end in tears.
+    #
+    def aliases
+      send :class_variable_get, :@@classy_aliases
     end
   end
-
-  # Return a hash of known aliases to Class objects
-  #
-  #   ParentClass.aliases   # => { :pop => ParentClass, :kid => AliasedSubclass, :kid2 => AnotherClass, :chunky_bacon => AnotherClass }
-  #
-  def aliases
-    class_variable_get(:@@classy_aliases).dup
-  end
-
 end

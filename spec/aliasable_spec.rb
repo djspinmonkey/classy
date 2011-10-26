@@ -2,11 +2,10 @@ require File.join(File.dirname(__FILE__), 'spec_helper')
 
 describe "Aliasable" do
 
-  # TODO: It would be better to tear these down and rebuild them before each
-  # test, since some of the tests add or remove aliases.
   before :all do
+    Base.forget_aliases if Object.const_defined? "Base"
     class Base
-      extend Aliasable
+      include Aliasable
       aka :base
     end
 
@@ -18,6 +17,21 @@ describe "Aliasable" do
       aka :childB
     end
 
+    Meta.forget_aliases if Object.const_defined? "Meta"
+    module Meta
+      include Aliasable
+    end
+
+    class IncluderA
+      include Meta
+      aka :incA
+    end
+
+    class IncluderB
+      include Meta
+      aka :incB
+    end
+
   end
 
   describe ".aliases" do
@@ -27,6 +41,13 @@ describe "Aliasable" do
         :childA => ChildA,
         :first_child => ChildA,
         :childB => ChildB
+      })
+    end
+
+    it "should work on modules as well as classes" do
+      Meta.aliases.should eql({
+        :incA => IncluderA,
+        :incB => IncluderB
       })
     end
   end
@@ -46,11 +67,15 @@ describe "Aliasable" do
       Base.find(:first_child).should equal ChildA
       Base.find(:childB).should equal ChildB
     end
+
+    it "should work on modules as well as bases" do
+      Meta.find(:incA).should equal IncluderA
+    end
   end
 
   it "should keep aliases of different class hierarchies separate" do
     class AnotherBase
-      extend Aliasable
+      include Aliasable
     end
 
     lambda {
@@ -75,6 +100,11 @@ describe "Aliasable" do
     it "should clear all aliases for this hierarchy" do
       Base.forget_aliases
       Base.aliases.should be_empty
+    end
+
+    it "should work for modules as well as classes" do
+      Meta.forget_aliases
+      Meta.aliases.should be_empty
     end
   end
 
