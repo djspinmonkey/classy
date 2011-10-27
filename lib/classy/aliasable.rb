@@ -35,7 +35,7 @@
 #
 #   Meta.find(:klass)  # => AliasedClass
 #
-# More complex usage examples can be found in the aliasable_spec.rb file.
+# More complex usage examples can be found in the spec file.
 #
 # NOTE: This defines a class variable, @@classy_aliases, on any class or module
 # that includes Aliasable (or any class that includes a module including
@@ -57,11 +57,16 @@ module Aliasable
     super
   end
 
-  # Methods for the class or module that the aliased classes inherit from or
-  # extend.
+  # Methods for the class or module that directly includes Aliasable.  
   #
   module ControllingClassMethods
-    # Handle a class including a module that has included Aliasable.
+    # Handle a class including a module that has included Aliasable.  Since the
+    # contolling module has extended this module, this method ends up being
+    # called when the controlling module is included.
+    # 
+    # As a minor side effect, an instance method named #included ends up on any
+    # class that directly includes Aliasable.  If you know an elegant way to
+    # avoid this, I welcome pull requests.  :-)
     #
     # :nodoc:
     #
